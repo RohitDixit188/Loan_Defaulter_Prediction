@@ -1,3 +1,7 @@
-# Loan_Defaulter_Prediction_Kaggle
- 
- This repository contanins R Code for Loan Prediction using Random Forest
+# Loan_Prediction
+
+# Problem Statement
+
+Company wants to automate the loan eligibility process (real time) based on customer detail provided while filling online application form. These details are Gender, Marital Status, Education, Number of Dependents, Income, Loan Amount, Credit History and others. To automate this process, they have given a problem to identify the customers segments, those are eligible for loan amount so that they can specifically target these customers. Here they have provided a partial data set.
+
+This repository contanins R Code for Loan Prediction using Random Forest, KNN, logistic Regression, SVM using liner Kernel, Neural Networks.

@@ -180,6 +180,31 @@ print(ggplot(data, aes(x=Loan_Status,y=ApplicantIncome,fill=Loan_Status))+geom_b
 print(ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by coapplicant income"))
 print(ggplot(data, aes(x=Loan_Status,y=LoanAmount,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Loan Amount"))
 ```
+```{r, message=FALSE, warning=FALSE}
+library(DiagrammeR)
+grViz("digraph a_nice_graph {
+        
+        # node definitions with substituted label text
+        node [fontname = Helvetica, shape = rectangle]        
+        rec1 [label = '@@1']
+        rec2 [label = '@@2']
+        rec3 [label = '@@5']
+
+        node [fontname = Helvetica, shape = oval]
+        ova1 [label = '@@3']
+        ova2 [label = '@@4']
+
+        # edge definitions with the node IDs
+        rec1 -> ova1 -> rec2 -> ova2 -> rec3
+        }
+      
+        [1]: 'When there is No co-applicant income assuming as Unmarried and Married otherwise'
+        [2]: 'Plot shows that if gender is male its income is more than female so will use it'
+        [3]: 'When Dependents is unknown but not married then assuming no dependents'
+        [4]: 'describe'
+        [5]: 'report'
+      ")
+```
 
 ** Filling NA values**   
 ####When there is "No" co-applicant income assuming as Unmarried and Married otherwise    
@@ -198,7 +223,7 @@ print(ggplot(data, aes(x=Gender, y=ApplicantIncome))+geom_line()+ggtitle("Gender
 data$Dependents <- as.character(data$Dependents)
 data$Gender[data$Gender=="" & data$Dependents==""] <- "Male"
 ```
-When Dependents is unknown but not married then assuming no dependents   
+#When Dependents is unknown but not married then assuming no dependents   
 ```{r, message=FALSE, warning=FALSE}
 data$Dependents[data$Dependents=="" & data$Married=="No"]<- "0"
 ```

@@ -69,18 +69,18 @@ barplot(table(data$Loan_Status),main= "Loan_Status")
 ###1. Gender  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(data$Gender))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Gender")+labs(title="Bar Plot of Gender"))
+print(ggplot(data=data, aes(Gender, fill=Gender))+geom_bar()+theme_minimal()+labs(x = "Gender")+labs(title="Bar Plot of Gender"))
 ```
 
 * Take Away points:
  + Majority of are Male applicants
- + We have Unknwon Gender  
+ + We have Unknwon Gender (either impute it or remove it)
 
 ***
 ###2. Married  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6, fig.height=4}
-print(ggplot(data=data, aes(data$Married))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Married")+labs(title="Bar Plot of Married"))
+print(ggplot(data=data, aes(Married,fill=Married))+geom_bar()+theme_minimal()+labs(x = "Married")+labs(title="Bar Plot of Married"))
 ```
 
 * Take Away points:
@@ -90,7 +90,7 @@ print(ggplot(data=data, aes(data$Married))+geom_bar(fill="steelblue")+theme_mini
 ###3. Dependents  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(data$Dependents))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Dependents")+labs(title="Bar Plot of Dependents"))
+print(ggplot(data=data, aes(Dependents,fill=Dependents))+geom_bar()+theme_minimal()+labs(x = "Dependents")+labs(title="Bar Plot of Dependents"))
 ```
 
 * Take Away points:
@@ -100,7 +100,7 @@ print(ggplot(data=data, aes(data$Dependents))+geom_bar(fill="steelblue")+theme_m
 ###4. Education  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(data$Education))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Education")+labs(title="Bar Plot of Education"))
+print(ggplot(data=data, aes(Education,fill=Education))+geom_bar()+theme_minimal()+labs(x = "Education")+labs(title="Bar Plot of Education"))
 ```
 
 * Take Away points:
@@ -109,7 +109,7 @@ print(ggplot(data=data, aes(data$Education))+geom_bar(fill="steelblue")+theme_mi
 ###5. Self_Employed  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(data$Self_Employed))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Self_Employed")+labs(title="Bar Plot of Self_Employed"))
+print(ggplot(data=data, aes(Self_Employed,fill=Self_Employed))+geom_bar()+theme_minimal()+labs(x = "Self_Employed")+labs(title="Bar Plot of Self_Employed"))
 ```
 
 * Take Away points:
@@ -129,7 +129,7 @@ boxplot(data$ApplicantIncome,data$CoapplicantIncome,names=c("Applicant Income","
 ###7. LoanAmount (Numeric)  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=3,tidy=TRUE}
-boxplot(data$LoanAmount,main="Box Plot of LoanAmount on Data")
+boxplot(data$LoanAmount,names="LoanAmount",main="Box Plot of LoanAmount on Data")
 ```
 
 * Take Away points:  
@@ -149,7 +149,7 @@ print(ggplot(data=data, aes(data$Loan_Amount_Term))+geom_histogram(col="black",f
 ###9. Credit_History (Factor)  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 4}
-print(ggplot(data=data, aes(data$Credit_History))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Credit_History")+labs(title="Bar Plot of Credit_History in Data"))
+print(ggplot(data=data, aes(Credit_History,fill=Credit_History))+geom_bar()+theme_minimal()+labs(x = "Credit_History")+labs(title="Bar Plot of Credit_History in Data"))
 ```
 
 * Take Away points:- 
@@ -158,7 +158,7 @@ print(ggplot(data=data, aes(data$Credit_History))+geom_bar(fill="steelblue")+the
 ###10. Property_Area  
 
 ```{r, echo=FALSE, warning=FALSE}
-print(ggplot(data=data, aes(data$Property_Area))+geom_bar(fill="steelblue")+theme_minimal()+labs(x = "Property_Area")+labs(title="Bar Plot of Property_Area in Data"))
+print(ggplot(data=data, aes(Property_Area,fill=Property_Area))+geom_bar()+theme_minimal()+labs(x = "Property_Area")+labs(title="Bar Plot of Property_Area in Data"))
 ```
 
 * Take Away points:
@@ -168,17 +168,17 @@ print(ggplot(data=data, aes(data$Property_Area))+geom_bar(fill="steelblue")+them
 
 ```{r, echo=FALSE, warning=FALSE,fig.height=3}
 theme_set(theme_economist())
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Gender)+ggtitle("Loan Status by Gender of Applicant"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Married)+ggtitle("Loan Status by Marital Status of Applicant"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Dependents)+ggtitle("Loan Status by number of Dependents of Applicant"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Education)+ggtitle("Loan Status by Education of Applicant"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Self_Employed)+ggtitle("Loan Status by Employment status of Applicant"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Loan_Amount_Term)+ggtitle("Loan Status by terms  of loan"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Credit_History)+ggtitle("Loan Status by credit history of Applicant"))
-print(ggplot(data, aes(x=Loan_Status))+geom_bar()+facet_grid(.~Property_Area)+ggtitle("Loan Status by property area"))
-print(ggplot(data, aes(x=Loan_Status,y=ApplicantIncome))+geom_boxplot()+ggtitle("Loan Status by Applicant income"))
-print(ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome))+geom_boxplot()+ggtitle("Loan Status by coapplicant income"))
-print(ggplot(data, aes(x=Loan_Status,y=LoanAmount))+geom_boxplot()+ggtitle("Loan Status by Loan Amount"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Gender)+ggtitle("Loan Status by Gender of Applicant"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Married)+ggtitle("Loan Status by Marital Status of Applicant"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Dependents)+ggtitle("Loan Status by number of Dependents of Applicant"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Education)+ggtitle("Loan Status by Education of Applicant"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Self_Employed)+ggtitle("Loan Status by Employment status of Applicant"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Loan_Amount_Term)+ggtitle("Loan Status by terms  of loan"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Credit_History)+ggtitle("Loan Status by credit history of Applicant"))
+print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Property_Area)+ggtitle("Loan Status by property area"))
+print(ggplot(data, aes(x=Loan_Status,y=ApplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Applicant income"))
+print(ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by coapplicant income"))
+print(ggplot(data, aes(x=Loan_Status,y=LoanAmount,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Loan Amount"))
 ```
 
 ** Filling NA values**   

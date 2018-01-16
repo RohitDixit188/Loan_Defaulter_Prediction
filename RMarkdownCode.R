@@ -42,6 +42,7 @@ library(ggthemes)
 library(plyr)
 library(RANN)
 library(gridExtra)
+library(Rmisc)
 library(caTools)
 ```
 **Data Importing**  
@@ -66,10 +67,12 @@ barplot(table(data$Loan_Status),main= "Loan_Status")
 ```
 
 ##Lets's Explore our Independent variables-  
-###1. Gender  
+###1. Gender, Married, Dependents, Education  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(Gender, fill=Gender))+geom_bar()+theme_minimal()+labs(x = "Gender")+labs(title="Bar Plot of Gender"))
+p1 = ggplot(data=data, aes(Gender, fill=Gender))+geom_bar()+theme_minimal()+labs(x = "Gender")+labs(title="Bar Plot of Gender")+annotate("text", x = 1,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 1.32, y = 350, label = "- Majority of are Male applicants")+annotate("text",x = 1.575, y = 300, label = "- Unknwon Gender(either impute it or remove it)")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Gender)+ggtitle("Loan Status by Gender of Applicant")
+multiplot(p1, p2, cols=1)
 ```
 
 * Take Away points:
@@ -80,7 +83,9 @@ print(ggplot(data=data, aes(Gender, fill=Gender))+geom_bar()+theme_minimal()+lab
 ###2. Married  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6, fig.height=4}
-print(ggplot(data=data, aes(Married,fill=Married))+geom_bar()+theme_minimal()+labs(x = "Married")+labs(title="Bar Plot of Married"))
+p1 = ggplot(data=data, aes(Married,fill=Loan_Status))+geom_bar()+theme_minimal()+labs(x = "Married")+labs(title="Bar Plot of Married")+annotate("text", x = 1,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 1.4, y = 350, label = "- Majority of applicants are Married")+annotate("text",x = 1.42, y = 300, label = "- We have Unknwon Maratial Status")+annotate("text",x = 1.42, y = 250, label = "- More Loan Approved Entries in Data")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Married)+ggtitle("Loan Status by Marital Status of Applicant")
+multiplot(p1, p2, cols=2)
 ```
 
 * Take Away points:
@@ -90,7 +95,9 @@ print(ggplot(data=data, aes(Married,fill=Married))+geom_bar()+theme_minimal()+la
 ###3. Dependents  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(Dependents,fill=Dependents))+geom_bar()+theme_minimal()+labs(x = "Dependents")+labs(title="Bar Plot of Dependents"))
+p1 = ggplot(data=data, aes(Dependents,fill=Dependents))+geom_bar()+theme_minimal()+labs(x = "Dependents")+labs(title="Bar Plot of Dependents")+annotate("text", x = 3,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 3.9, y = 350, label = "- Majority of applicants have no dependents")+annotate("text",x = 3.65, y = 300, label = "- We have Unknwon Maratial Status")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Dependents)+ggtitle("Loan Status by number of Dependents of Applicant")
+multiplot(p1, p2, cols=2)
 ```
 
 * Take Away points:
@@ -100,7 +107,10 @@ print(ggplot(data=data, aes(Dependents,fill=Dependents))+geom_bar()+theme_minima
 ###4. Education  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(Education,fill=Education))+geom_bar()+theme_minimal()+labs(x = "Education")+labs(title="Bar Plot of Education"))
+t=c(`N`="Loan_Approved_Status - NO", `Y`="Loan_Approved_Status - YES")
+p1 = ggplot(data=data, aes(Education))+geom_bar()+facet_grid(.~Loan_Status,labeller = as_labeller(t))+theme_minimal()+labs(x = "Education")+labs(title="Bar Plot of Education")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Education)+ggtitle("Loan Status by Education of Applicant")
+multiplot(p1, p2, cols=2)
 ```
 
 * Take Away points:
@@ -109,7 +119,9 @@ print(ggplot(data=data, aes(Education,fill=Education))+geom_bar()+theme_minimal(
 ###5. Self_Employed  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-print(ggplot(data=data, aes(Self_Employed,fill=Self_Employed))+geom_bar()+theme_minimal()+labs(x = "Self_Employed")+labs(title="Bar Plot of Self_Employed"))
+p1 = ggplot(data, aes(x=Loan_Status,y=Self_Employed,color=Gender,shape=Loan_Status))+geom_jitter(alpha=0.7)+ggtitle("Self Employed & Loan status Jitter Plot with Gender of Applicant")+scale_shape_manual(values = c(0,16))
+p2 = ggplot(data, aes(x=Self_Employed,fill=Loan_Status))+geom_bar()+facet_grid(.~Loan_Status)+ggtitle("Loan Status by Employment status of Applicant")
+multiplot(p1, p2, cols=2)
 ```
 
 * Take Away points:
@@ -119,7 +131,9 @@ print(ggplot(data=data, aes(Self_Employed,fill=Self_Employed))+geom_bar()+theme_
 ###6. ApplicantIncome (Numeric) & CoapplicantIncome (Numeric)  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=3}
-boxplot(data$ApplicantIncome,data$CoapplicantIncome,names=c("Applicant Income","Coapplicant Income"),main="Box Plot of Applicant & Coapplicant Income on Data")
+p1 = ggplot(data, aes(x=Loan_Status,y=ApplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Applicant income")
+p2 = ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by coapplicant income")
+multiplot(p1, p2, cols=2)
 ```
 
 * Take Away points:
@@ -129,7 +143,7 @@ boxplot(data$ApplicantIncome,data$CoapplicantIncome,names=c("Applicant Income","
 ###7. LoanAmount (Numeric)  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=3,tidy=TRUE}
-boxplot(data$LoanAmount,names="LoanAmount",main="Box Plot of LoanAmount on Data")
+print(ggplot(data, aes(x=Loan_Status,y=LoanAmount,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Loan Amount"))
 ```
 
 * Take Away points:  
@@ -149,7 +163,7 @@ print(ggplot(data=data, aes(data$Loan_Amount_Term))+geom_histogram(col="black",f
 ###9. Credit_History (Factor)  
 
 ```{r, echo=FALSE, warning=FALSE,fig.width = 4}
-print(ggplot(data=data, aes(Credit_History,fill=Credit_History))+geom_bar()+theme_minimal()+labs(x = "Credit_History")+labs(title="Bar Plot of Credit_History in Data"))
+print(ggplot(data, aes(x=Loan_Status,y=Credit_History,shape=Loan_Status,color=Loan_Status,alpha=0.5))+geom_jitter()+ggtitle("Loan Status and Credit History"))
 ```
 
 * Take Away points:- 
@@ -164,22 +178,7 @@ print(ggplot(data=data, aes(Property_Area,fill=Property_Area))+geom_bar()+theme_
 * Take Away points:
   + Majority of property holdings are in semiurban area  
 
-##Various Multiple plots explaining relationship between different variables  
-
-```{r, echo=FALSE, warning=FALSE,fig.height=3}
-theme_set(theme_economist())
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Gender)+ggtitle("Loan Status by Gender of Applicant"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Married)+ggtitle("Loan Status by Marital Status of Applicant"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Dependents)+ggtitle("Loan Status by number of Dependents of Applicant"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Education)+ggtitle("Loan Status by Education of Applicant"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Self_Employed)+ggtitle("Loan Status by Employment status of Applicant"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Loan_Amount_Term)+ggtitle("Loan Status by terms  of loan"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Credit_History)+ggtitle("Loan Status by credit history of Applicant"))
-print(ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Property_Area)+ggtitle("Loan Status by property area"))
-print(ggplot(data, aes(x=Loan_Status,y=ApplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Applicant income"))
-print(ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by coapplicant income"))
-print(ggplot(data, aes(x=Loan_Status,y=LoanAmount,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Loan Amount"))
-```
+##Flow Chart for Data Pipeline
 ```{r, message=FALSE, warning=FALSE}
 library(DiagrammeR)
 grViz("digraph a_nice_graph {
@@ -198,7 +197,7 @@ grViz("digraph a_nice_graph {
         rec1 -> ova1 -> rec2 -> ova2 -> rec3
         }
       
-        [1]: 'When there is No co-applicant income assuming as Unmarried and Married otherwise'
+        [1]: 'When there is No co-applicant income assuming as Unmarried else Married'
         [2]: 'Plot shows that if gender is male its income is more than female so will use it'
         [3]: 'When Dependents is unknown but not married then assuming no dependents'
         [4]: 'describe'

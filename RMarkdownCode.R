@@ -1,10 +1,6 @@
 ---
 title: "Loan Prediction"
 author: "Rohit Dixit"
-geometry: margin=1in
-fontfamily: mathpazo
-fontsize: 11pt
-output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -44,6 +40,8 @@ library(RANN)
 library(gridExtra)
 library(Rmisc)
 library(caTools)
+library(DiagrammeR)
+library(car)
 ```
 **Data Importing**  
 Data available at [https://datahack-prod.s3.ap-south-1.amazonaws.com/train_file/train_u6lujuX_CVtuZ9i.csv](https://datahack-prod.s3.ap-south-1.amazonaws.com/train_file/train_u6lujuX_CVtuZ9i.csv)
@@ -67,82 +65,71 @@ barplot(table(data$Loan_Status),main= "Loan_Status")
 ```
 
 ##Lets's Explore our Independent variables-  
-###1. Gender, Married, Dependents, Education  
+###1. Gender 
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-p1 = ggplot(data=data, aes(Gender, fill=Gender))+geom_bar()+theme_minimal()+labs(x = "Gender")+labs(title="Bar Plot of Gender")+annotate("text", x = 1,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 1.32, y = 350, label = "- Majority of are Male applicants")+annotate("text",x = 1.575, y = 300, label = "- Unknwon Gender(either impute it or remove it)")
-p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Gender)+ggtitle("Loan Status by Gender of Applicant")
+```{r, echo=FALSE, warning=FALSE}
+p1 = ggplot(data=data, aes(Gender, fill=Gender))+geom_bar()+theme_minimal()+labs(x = "Gender")+labs(title="Bar Plot of Gender")+annotate("text", x = 1,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 1.38, y = 350, label = "- Majority of are Male applicants")+annotate("text",x = 1.1, y = 300, label = "- Unknwon Gender")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Gender)+ggtitle("Plot of Loan Status facet by Gender of Applicant")
 multiplot(p1, p2, cols=1)
 ```
 
-* Take Away points:
- + Majority of are Male applicants
- + We have Unknwon Gender (either impute it or remove it)
-
-***
 ###2. Married  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6, fig.height=4}
-p1 = ggplot(data=data, aes(Married,fill=Loan_Status))+geom_bar()+theme_minimal()+labs(x = "Married")+labs(title="Bar Plot of Married")+annotate("text", x = 1,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 1.4, y = 350, label = "- Majority of applicants are Married")+annotate("text",x = 1.42, y = 300, label = "- We have Unknwon Maratial Status")+annotate("text",x = 1.42, y = 250, label = "- More Loan Approved Entries in Data")
-p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Married)+ggtitle("Loan Status by Marital Status of Applicant")
-multiplot(p1, p2, cols=2)
+```{r, echo=FALSE, warning=FALSE}
+p1 = ggplot(data=data, aes(Married,fill=Loan_Status))+geom_bar()+theme_minimal()+labs(x = "Married")+labs(title="Bar Plot of Married")+annotate("text", x = 1,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 1.42, y = 350, label = "- Majority of applicants are Married")+annotate("text",x = 1.44, y = 300, label = "- We have Unknwon Maratial Status")+annotate("text",x = 1.5, y = 250, label = "- More Loan Approved Entries in Data")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Married)+ggtitle("Plot of Marital Status facet by Loan Status of Applicant")
+multiplot(p1, p2, cols=1)
 ```
-
-* Take Away points:
- + Majority of applicants are Married
- + We have Unknwon, So preprocessing will be needed  
 
 ###3. Dependents  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
-p1 = ggplot(data=data, aes(Dependents,fill=Dependents))+geom_bar()+theme_minimal()+labs(x = "Dependents")+labs(title="Bar Plot of Dependents")+annotate("text", x = 3,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 3.9, y = 350, label = "- Majority of applicants have no dependents")+annotate("text",x = 3.65, y = 300, label = "- We have Unknwon Maratial Status")
-p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Dependents)+ggtitle("Loan Status by number of Dependents of Applicant")
-multiplot(p1, p2, cols=2)
+```{r, echo=FALSE, warning=FALSE}
+p1 = ggplot(data=data, aes(Dependents,fill=Dependents))+geom_bar()+theme_minimal()+labs(x = "Dependents")+labs(title="Bar Plot of Dependents")+annotate("text", x = 3,y=400, label = "* Highlights:",fontface =2)+annotate("text",x = 4, y = 350, label = "- Majority of applicants have no dependents")+annotate("text",x = 3.65, y = 300, label = "- We have Unknwon dependents")
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Dependents)+ggtitle("Plot of Loan Status facet by number of Dependents of Applicant")
+multiplot(p1, p2, cols=1)
 ```
 
-* Take Away points:
-+ Majority of applicants have no dependents 
-+ We have Unknwon  
-  
 ###4. Education  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
+```{r, echo=FALSE, warning=FALSE}
 t=c(`N`="Loan_Approved_Status - NO", `Y`="Loan_Approved_Status - YES")
 p1 = ggplot(data=data, aes(Education))+geom_bar()+facet_grid(.~Loan_Status,labeller = as_labeller(t))+theme_minimal()+labs(x = "Education")+labs(title="Bar Plot of Education")
-p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Education)+ggtitle("Loan Status by Education of Applicant")
-multiplot(p1, p2, cols=2)
+p2 = ggplot(data, aes(x=Loan_Status,fill=Loan_Status))+geom_bar()+facet_grid(.~Education)+ggtitle("Plot of Loan Status facet by Education of Applicant")
+multiplot(p1, p2, cols=1)
 ```
 
 * Take Away points:
 + Majority of are Graduates   
   
+  
 ###5. Self_Employed  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
+```{r, echo=FALSE, warning=FALSE}
 p1 = ggplot(data, aes(x=Loan_Status,y=Self_Employed,color=Gender,shape=Loan_Status))+geom_jitter(alpha=0.7)+ggtitle("Self Employed & Loan status Jitter Plot with Gender of Applicant")+scale_shape_manual(values = c(0,16))
-p2 = ggplot(data, aes(x=Self_Employed,fill=Loan_Status))+geom_bar()+facet_grid(.~Loan_Status)+ggtitle("Loan Status by Employment status of Applicant")
-multiplot(p1, p2, cols=2)
+p2 = ggplot(data, aes(x=Self_Employed,fill=Loan_Status))+geom_bar()+facet_grid(.~Loan_Status)+ggtitle("Plot of Loan Status facet by Employment status of Applicant")
+multiplot(p1, p2, cols=1)
 ```
 
 * Take Away points:
   + Majority of applicants are not self employed
   + We have Unknwon values, so preprocessing needed  
-
+  
+  
 ###6. ApplicantIncome (Numeric) & CoapplicantIncome (Numeric)  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=3}
-p1 = ggplot(data, aes(x=Loan_Status,y=ApplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Applicant income")
-p2 = ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by coapplicant income")
-multiplot(p1, p2, cols=2)
+```{r, echo=FALSE, warning=FALSE}
+p1 = ggplot(data, aes(x=Loan_Status,y=ApplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Box plot of Applicant income and Loan Status")
+p2 = ggplot(data, aes(x=Loan_Status,y=CoapplicantIncome,fill=Loan_Status))+geom_boxplot()+ggtitle("Box plot of Coapplicant income and Loan Status")
+multiplot(p1, p2, cols=1)
 ```
 
 * Take Away points:
-  + Plots show right skewness
+  + Applicant Income box plot shows right skewness
   + We have outliers so scaling and centering willl be needed  
   
 ###7. LoanAmount (Numeric)  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=3,tidy=TRUE}
+```{r, echo=FALSE, warning=FALSE}
 print(ggplot(data, aes(x=Loan_Status,y=LoanAmount,fill=Loan_Status))+geom_boxplot()+ggtitle("Loan Status by Loan Amount"))
 ```
 
@@ -152,7 +139,7 @@ print(ggplot(data, aes(x=Loan_Status,y=LoanAmount,fill=Loan_Status))+geom_boxplo
   
 ###8. Loan_Amount_Term (Numeric)  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 6,fig.height=4}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 print(ggplot(data=data, aes(data$Loan_Amount_Term))+geom_histogram(col="black",fill="steelblue",alpha=1)+theme_minimal()+labs(x = "Loan_Amount_Term")+labs(title= "Histogram of Loan_Amount_Term"))
 ```
 
@@ -162,7 +149,7 @@ print(ggplot(data=data, aes(data$Loan_Amount_Term))+geom_histogram(col="black",f
 
 ###9. Credit_History (Factor)  
 
-```{r, echo=FALSE, warning=FALSE,fig.width = 4}
+```{r, echo=FALSE, warning=FALSE}
 print(ggplot(data, aes(x=Loan_Status,y=Credit_History,shape=Loan_Status,color=Loan_Status,alpha=0.5))+geom_jitter()+ggtitle("Loan Status and Credit History"))
 ```
 
@@ -178,8 +165,8 @@ print(ggplot(data=data, aes(Property_Area,fill=Property_Area))+geom_bar()+theme_
 * Take Away points:
   + Majority of property holdings are in semiurban area  
 
-##Flow Chart for Data Pipeline
-```{r, message=FALSE, warning=FALSE}
+###Flow Chart for Data Cleaning Pipeline
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.height=8}
 mermaid("
 graph TD
   A>Data Cleaning Pipeline Steps]-->B(When there is No co-applicant income assuming as Unmarried and Married otherwise)
@@ -194,7 +181,7 @@ graph TD
 ")
 ```
 
-** Filling NA values**   
+###Performing data cleaing steps mentioned above   
 ####When there is "No" co-applicant income assuming as Unmarried and Married otherwise    
 ```{r, message=FALSE, warning=FALSE}
 #converting factor varibales to charcter later will convert back
@@ -204,14 +191,12 @@ data$Self_Employed <- as.character(data$Self_Employed)
 data$Married[data$Married=="" & data$CoapplicantIncome==0]<-"No"
 data$Married[data$Married==""]<- "Yes"
 ```
-####Plot shows that if gender is male its income is more than female so   
+####Data shows if gender is male its income is more than female so   
 ```{r, message=FALSE, warning=FALSE}
-print(ggplot(data, aes(x=Gender, y=ApplicantIncome))+geom_line()+ggtitle("Gender vs Applicant_Income Plot"))
-#Plot shows that if gender is male its income is more than female so
 data$Dependents <- as.character(data$Dependents)
 data$Gender[data$Gender=="" & data$Dependents==""] <- "Male"
 ```
-#When Dependents is unknown but not married then assuming no dependents   
+####When Dependents is unknown but not married then assuming no dependents   
 ```{r, message=FALSE, warning=FALSE}
 data$Dependents[data$Dependents=="" & data$Married=="No"]<- "0"
 ```

@@ -180,29 +180,18 @@ print(ggplot(data=data, aes(Property_Area,fill=Property_Area))+geom_bar()+theme_
 
 ##Flow Chart for Data Pipeline
 ```{r, message=FALSE, warning=FALSE}
-library(DiagrammeR)
-grViz("digraph a_nice_graph {
-        
-        # node definitions with substituted label text
-        node [fontname = Helvetica, shape = rectangle]        
-        rec1 [label = '@@1']
-        rec2 [label = '@@2']
-        rec3 [label = '@@5']
-
-        node [fontname = Helvetica, shape = oval]
-        ova1 [label = '@@3']
-        ova2 [label = '@@4']
-
-        # edge definitions with the node IDs
-        rec1 -> ova1 -> rec2 -> ova2 -> rec3
-        }
-      
-        [1]: 'When there is No co-applicant income assuming as Unmarried else Married'
-        [2]: 'Plot shows that if gender is male its income is more than female so will use it'
-        [3]: 'When Dependents is unknown but not married then assuming no dependents'
-        [4]: 'describe'
-        [5]: 'report'
-      ")
+mermaid("
+graph TD
+  A>Data Cleaning Pipeline Steps]-->B(When there is No co-applicant income assuming as Unmarried and Married otherwise)
+  B(When there is No co-applicant income assuming as Unmarried and Married otherwise)-->C(Plot shows that if gender is male its income is more than female so will use it)
+  C(Plot shows that if gender is male its income is more than female so will use it)-->D(When Dependents is unknown but not married then assuming no dependents)
+  D(When Dependents is unknown but not married then assuming no dependents)-->E(Mode of the loan term is 360, so converting NA as 360, 350 to 360 and 6 to 60 assuming typing error)
+  E(Mode of the loan term is 360, so converting NA as 360, 350 to 360 and 6 to 60 assuming typing error)-->F(Assuming NA factor in self employed as NO. As most are not self employed)
+  F(Assuming NA factor in self employed as NO. As most are not self employed)-->G(Assuming person with no credit history as another category)
+  G(Assuming person with no credit history as another category)-->H(Imputing remaining gender & dependents using Mode Imputation)
+  H(Imputing remaining gender & dependents using Mode Imputation)-->I(Performing Centering Scaling on numeric data type column)
+  I(Performing Centering Scaling on numeric data type column)-->J(K-Nearest Neighbours to predict unknown Loan Amount)
+")
 ```
 
 ** Filling NA values**   
